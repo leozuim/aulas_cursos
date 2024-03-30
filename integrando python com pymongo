@@ -1,0 +1,70 @@
+import pymongo as pyM
+from pprint import pprint
+
+client = pyM.MongoClient("mongodb+srv://leonardozuimruas:pymongo1@cluster.0nksjot.mongodb.net/?retryWrites=true&w=majority&appName=Cluster")
+
+db = client.clientes
+collection = db.bano
+
+dados = [{
+    "nome": "Carlinhos maia",
+    "cpf": "12345678912",
+    "endereço": "Rua 1A, 1",
+    "conta": "001",
+    "agencia": "0001",
+    "tipo": "corrente",
+    "saldo": 0
+}, {
+    "nome": "Thiaghinho Exalta",
+    "cpf": "98765432112",
+    "endereço": "Rua 1A, 2",
+    "conta": "002",
+    "agencia": "0002",
+    "tipo": "poupança",
+    "saldo": 10
+}, {
+    "nome": "Charlies Braum jr",
+    "cpf": "12345678998",
+    "endereço": "Rua 1A, 3",
+    "conta": "003",
+    "agencia": "0003",
+    "tipo": "corrente",
+    "saldo": 100
+}, {
+    "nome": "Thais Carla",
+    "cpf": "58698742658",
+    "endereço": "Rua 1A, 4",
+    "conta": "004",
+    "agencia": "0004",
+    "tipo": "kilos",
+    "saldo": 1000
+}]
+
+collection.insert_many(dados)
+
+dado = {
+    "nome": "aquele cara la",
+    "cpf": "26458698456",
+    "endereço": "Rua 1A, 5",
+    "conta": "005",
+    "agencia": "0005",
+    "tipo": "corrente",
+    "saldo": 10000
+}
+collection.insert_one(dado)
+
+pprint(collection.find())
+find = collection.find()
+for dado in find:
+    pprint(dado)
+
+print(collection.count_documents({}))
+
+print(collection.count_documents({"agencia": "0001"}))
+
+for dado in collection.find({}).sort("nome"):
+    pprint(dado)
+
+
+
+
