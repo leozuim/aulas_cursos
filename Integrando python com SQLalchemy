@@ -1,0 +1,88 @@
+import sqlalchemy
+from sqlalchemy.orm import (
+    declarative_base,
+    relationship,
+    Session)
+from sqlalchemy import (
+    Column,
+    String,
+    ForeignKey,
+    Integer,
+    Float,
+    select,
+    create_engine,
+    func)
+
+Base = declarative_base()
+engine = create_engine('sqlite:///memory')
+
+class Cliente(Base):
+    __tablename__ = "Cliente"
+    id_cliente = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    cpf = Column(String(9))
+    endereco = relationship("Conta", back_populates="cliente")
+
+
+
+class Conta(Base):
+    __tablename__ = "Conta"
+    id_conta = Column(Integer, primary_key=True, autoincrement=True)
+    tipo = Column(String)
+    agencia = Column(String)
+    numero = Column(Integer)
+    id_cliente = Column(Integer, ForeignKey("Cliente.id_cliente"))
+    saldo = Column(Float)
+
+    cliente = relationship("Cliente", back_populates="endereco")
+
+
+def cri_tabelas():
+    Base.metadata.create_all(engine)
+
+
+with Session(engine) as session:
+    Carlinhos = Cliente(
+        name="Carlinhos Maia",
+        cpf="12345678912",
+        endereco = [Conta(agencia='0001')]
+    )
+    Anita = Cliente(
+        name="Anita de Jesus",
+        cpf="98765432121",
+        endereco=[Conta(agencia='0002')]
+    )
+    Thiago = Cliente(
+        name="Thiaguinho exalta",
+        cpf="12345678989",
+        endereco=[Conta(agencia='0003')]
+    )
+
+session.add_all([Carlinhos, Anita, Thiago])
+stmt = select(Cliente)
+
+
+connection = engine.connect()
+results = connection.execute(stmt).fetchall()
+
+
+print("\n\n")
+print(f'tablename cliente')
+print(Cliente.__tablename__)
+print(f'\n\ntablename conta')
+print(Conta.__tablename__)
+print("\n\n")
+
+for result in results:
+    print(result)
+
+stmt_count = select(func.count('*')).select_from(Cliente)
+results = connection.execute(stmt_count).fetchall()
+for result in results:
+    print(result)
+
+stmt_where = select(Cliente).where(Conta.id_conta.in_([2]))
+results = connection.execute(stmt_where).fetchall()
+for result in results:
+    print(result)
+
