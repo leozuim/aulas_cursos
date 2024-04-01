@@ -1,0 +1,12 @@
+qtd_de_entradas = int(input())
+
+
+while qtd_de_entradas >0 :
+    nivel_de_energia = int(input())
+    if nivel_de_energia > 8000 :
+        print ('Mais de 8000!')
+    else :
+        print('Inseto!')
+    qtd_de_entradas -= 1
+
+exit
